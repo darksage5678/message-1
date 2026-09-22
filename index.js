@@ -3,7 +3,7 @@ require('dotenv').config();
 // 1. Express 웹 서버 (Render 24시간 호스팅용)
 const express = require('express');
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 2000;
 
 app.get('/', (req, res) => res.send('디스코드 봇 정상 가동 중'));
 app.listen(PORT);
