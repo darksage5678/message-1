@@ -1,5 +1,5 @@
 {
-  "name": "message-2",
+  "name": "message",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -12,7 +12,7 @@
   "type": "commonjs",
   "dependencies": {
     "discord.js": "^14.27.0",
-    "dotenv": "^18.0.3",
+    "dotenv": "^18.0.1",
     "express": "^5.2.1"
   }
 }
