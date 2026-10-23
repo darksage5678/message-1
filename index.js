@@ -1,16 +1,22 @@
 require('dotenv').config();
 
+// 디버깅용: 토큰이 제대로 로드되었는지 확인 (앞 5자리만 살짝 출력)
+console.log('--- [토큰 로드 상태 확인] ---');
+console.log('TOKEN_1:', process.env.TOKEN_1 ? `${process.env.TOKEN_1.substring(0, 5)}... (설정됨)` : '❌ 없음 (설정 안 됨)');
+console.log('TOKEN_2:', process.env.TOKEN_2 ? `${process.env.TOKEN_2.substring(0, 5)}... (설정됨)` : '❌ 없음 (설정 안 됨)');
+console.log('------------------------------\n');
+
 // 1. Express 웹 서버 (Render 24시간 호스팅 및 UptimeRobot 응답용)
 const express = require('express');
 const app = express();
-const PORT = process.env.PORT || 0; // 로컬 테스트 시 포트 충돌 자동 방지
+const PORT = process.env.PORT || 0;
 
 app.get('/', (req, res) => {
   res.status(200).send('OK');
 });
 
 app.listen(PORT, () => {
-  console.log(`웹 서버가 정상 작동 중입니다.`);
+  console.log(`웹 서버가 정상 작동 중입니다. (포트: ${PORT})`);
 });
 
 // 2. 디스코드 공통 설정
@@ -39,9 +45,7 @@ function setupBotLogic(client, botName, prefix) {
       return message.reply('❌ 관리자 전용 명령어입니다.');
     }
 
-    // 전송 시작 안내 메시지 즉시 출력
     const statusMsg = await message.reply(`📤 **[${botName}] 메시지를 전송하는 중입니다...**`);
-
     const fullMessage = `📢 **[${message.guild.name}] 서버 전체 공지**\n\n${contentToSend}`;
 
     try {
@@ -70,32 +74,29 @@ function setupBotLogic(client, botName, prefix) {
   });
 }
 
-// 4. 1번 봇 생성 (명령어: !전송)
+// 4. 1번 봇 (명령어: !전송) & 2번 봇 (명령어: !전송2) 생성
 const client1 = new Client({ intents: clientIntents });
 setupBotLogic(client1, '1번 봇', '!전송 ');
 
-// 5. 2번 봇 생성 (명령어: !전송2)
 const client2 = new Client({ intents: clientIntents });
-setupBotLogic(client2, '2번 봇', '!전송 ');
+setupBotLogic(client2, '2번 봇', '!전송2 ');
 
-// 6. 봇 로그인 처리 (.env 또는 Render 환경 변수 TOKEN_1, TOKEN_2 지원)
-const token1 = process.env.TOKEN_1 || process.env.TOKEN; // TOKEN_1이 없으면 기존 TOKEN도 허용
+// 5. 토큰 로그인 실행
+const token1 = process.env.TOKEN_1 || process.env.TOKEN;
 const token2 = process.env.TOKEN_2;
 
 if (!token1) {
-  console.error("❌ 오류: 1번 봇 토큰(TOKEN_1 또는 TOKEN)을 찾을 수 없습니다.");
+  console.error("❌ 오류: 1번 봇 토큰(TOKEN_1)을 찾을 수 없습니다. .env 파일을 확인해주세요.");
 } else {
-  console.log(`📡 1번 봇 로그인을 시도합니다...`);
   client1.login(token1).catch((error) => {
-    console.error("❌ 1번 봇 로그인 실패:", error);
+    console.error("❌ 1번 봇 로그인 실패:", error.message);
   });
 }
 
 if (!token2) {
-  console.log("ℹ️ 안내: 2번 봇 토큰(TOKEN_2)이 설정되지 않았습니다. (1개만 구동됩니다)");
+  console.log("ℹ️ 안내: 2번 봇 토큰(TOKEN_2)이 없습니다. (1번 봇만 구동됩니다)");
 } else {
-  console.log(`📡 2번 봇 로그인을 시도합니다...`);
   client2.login(token2).catch((error) => {
-    console.error("❌ 2번 봇 로그인 실패:", error);
+    console.error("❌ 2번 봇 로그인 실패:", error.message);
   });
 }
