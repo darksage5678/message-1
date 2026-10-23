@@ -79,7 +79,7 @@ const client1 = new Client({ intents: clientIntents });
 setupBotLogic(client1, '1번 봇', '!전송 ');
 
 const client2 = new Client({ intents: clientIntents });
-setupBotLogic(client2, '2번 봇', '!전송2 ');
+setupBotLogic(client2, '2번 봇', '!전송 ');
 
 // 5. 토큰 로그인 실행
 const token1 = process.env.TOKEN_1 || process.env.TOKEN;
